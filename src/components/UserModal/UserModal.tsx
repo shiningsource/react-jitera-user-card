@@ -39,7 +39,7 @@ export const UserModal: FC<UserModalProps> = ({
       phone: user?.phone,
       website: user?.website,
     });
-  }, [user]);
+  }, [user, form]);
 
   return (
     <>
