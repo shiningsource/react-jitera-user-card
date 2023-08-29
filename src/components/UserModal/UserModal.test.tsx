@@ -1,7 +1,6 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { UserModal, UserModalProps } from "./UserModal";
-import exp from "constants";
 
 const user = {
   id: 1,
@@ -35,7 +34,7 @@ describe("userModal", () => {
     expect(websiteElements).toBeInTheDocument();
   });
 
-  it("Cancel and X action should be called", () => {
+  it("Cancel and <X> action should be called", () => {
     render(<UserModal {...props} />);
     const actions = screen.getAllByRole("button");
 
@@ -44,5 +43,40 @@ describe("userModal", () => {
 
     fireEvent.click(actions[2]);
     expect(props.onCancel).toHaveBeenCalled();
+  });
+
+  it("Save action should be called", async () => {
+    const editedUser = {
+      email: "editedUser@jitera.com",
+      id: 1,
+      name: "Leanne Graham",
+      phone: "editedUser",
+      website: "https://editedUser.com",
+    };
+
+    render(<UserModal {...props} />);
+    const actions = screen.getAllByRole("button");
+    const inputs = screen.getAllByRole("textbox");
+
+    fireEvent.change(inputs[0], { target: { value: "" } });
+    fireEvent.change(inputs[0], { target: { value: editedUser.email } });
+    fireEvent.change(inputs[1], { target: { value: "" } });
+    fireEvent.change(inputs[1], { target: { value: editedUser.phone } });
+    fireEvent.change(inputs[2], { target: { value: "" } });
+    fireEvent.change(inputs[2], { target: { value: editedUser.website } });
+
+    const emailElement = screen.getByDisplayValue(editedUser.email);
+    const phoneElement = screen.getByDisplayValue(editedUser.phone);
+    const websiteElement = screen.getByDisplayValue(editedUser.website);
+
+    expect(emailElement).toBeInTheDocument();
+    expect(phoneElement).toBeInTheDocument();
+    expect(websiteElement).toBeInTheDocument();
+
+    fireEvent.click(actions[1]);
+
+    await waitFor(() => {
+      expect(props.onSave).toHaveBeenCalledWith({ ...editedUser });
+    });
   });
 });
