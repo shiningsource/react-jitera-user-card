@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 
 import { UserList } from "./UserList";
 
